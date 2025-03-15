@@ -8,6 +8,7 @@ import EmployeeDashboard from "./pages/EmployeeDashboard";
 import Employees from "./pages/Employees";
 import Tasks from "./pages/Tasks";
 import { useAuth } from "./context/AuthContext";
+import { useState } from "react";
 import "./App.css";
 
 function AppRouter() {
@@ -20,33 +21,38 @@ function AppRouter() {
   );
 }
 
-// Layout with Fixed Sidebar & Proper Content Alignment
+// Layout with Fixed Sidebar & Dynamic Content Alignment
 const MainLayout = () => {
   const { user } = useAuth(); // Get user role
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-800">
       {/* Sidebar */}
-      <Sidebar role={user?.role} />
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
-      {/* Main Content - Ensuring it starts after the sidebar */}
-      <div className="flex-1 p-6 bg-gray-800 text-gray-900 ml-64">
+      {/* Main Content - Adjust margin dynamically */}
+      <div
+        className={`p-6 transition-all duration-300 flex-1 ${isSidebarOpen ? "ml-64" : "ml-20"
+          }`}
+      >
         <Routes>
           <Route path="/" element={<Dashboard />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
           <Route path="/employees" element={<ProtectedRoute role="admin"><Employees /></ProtectedRoute>} />
+          <Route path="/tasks" element={<ProtectedRoute role="admin"><Tasks /></ProtectedRoute>} />
 
           {/* Employee Routes */}
           <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
-
-          {/* Shared Tasks Route */}
-          <Route path="/tasks" element={<ProtectedRoute role={["admin", "employee"]}><Tasks /></ProtectedRoute>} />
+          <Route path="/tasks" element={<ProtectedRoute role="employee"><Tasks /></ProtectedRoute>} />
         </Routes>
+
       </div>
     </div>
   );
 };
+
 
 export default AppRouter;

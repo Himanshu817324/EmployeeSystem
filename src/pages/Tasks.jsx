@@ -1,135 +1,257 @@
-import React, { useState } from "react";
-// eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import { Button, TextField } from "@mui/material";
+import { motion } from "framer-motion";
+
+const employees = [
+  { value: "John Doe", label: "John Doe" },
+  { value: "Jane Smith", label: "Jane Smith" },
+  { value: "Michael Johnson", label: "Michael Johnson" },
+];
+
+const statusOptions = [
+  { value: "To Do", label: "To Do" },
+  { value: "In Progress", label: "In Progress" },
+  { value: "Completed", label: "Completed" },
+];
+
+const priorityOptions = [
+  { value: "Low", label: "Low" },
+  { value: "Medium", label: "Medium" },
+  { value: "High", label: "High" },
+];
 
 const Tasks = () => {
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Design Employee Dashboard", completed: false },
-    { id: 2, title: "Integrate Task API", completed: true },
-  ]);
+  const [tasks, setTasks] = useState([]);
+  const [editingTask, setEditingTask] = useState(null);
+  const [search, setSearch] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState(null);
+  const [statusFilter, setStatusFilter] = useState(null);
+  const [sortBy, setSortBy] = useState(null);
 
-  const [newTask, setNewTask] = useState("");
-  const [editing, setEditing] = useState(null);
+  // Form Fields
+  const [taskTitle, setTaskTitle] = useState("");
+  const [assignedTo, setAssignedTo] = useState([]);
+  const [priority, setPriority] = useState(priorityOptions[1]);
+  const [status, setStatus] = useState(statusOptions[0]);
+  const [dueDate, setDueDate] = useState("");
 
-  // Add Task
-  const addTask = () => {
-    if (newTask.trim()) {
-      setTasks([...tasks, { id: Date.now(), title: newTask, completed: false }]);
-      setNewTask("");
+  // Load tasks from localStorage
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    setTasks(savedTasks);
+  }, []);
+
+  // Save tasks to localStorage
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  // Add or Update Task
+  const handleTask = () => {
+    if (taskTitle.trim()) {
+      if (editingTask) {
+        // Update Task
+        setTasks(tasks.map(task =>
+          task.id === editingTask ? {
+            ...task,
+            title: taskTitle,
+            assignedTo: assignedTo.map(e => e.value),
+            priority: priority.value,
+            status: status.value,
+            dueDate,
+          } : task
+        ));
+      } else {
+        // Add New Task
+        const newTask = {
+          id: Date.now(),
+          title: taskTitle,
+          assignedTo: assignedTo.map(e => e.value),
+          priority: priority.value,
+          status: status.value,
+          dueDate,
+          comments: [],
+        };
+        setTasks([...tasks, newTask]);
+      }
+      resetForm();
     }
   };
 
   // Edit Task
-  const editTask = (id) => {
-    const task = tasks.find((t) => t.id === id);
-    setEditing(id);
-    setNewTask(task.title);
-  };
-
-  // Update Task
-  const updateTask = () => {
-    setTasks(tasks.map((task) => (task.id === editing ? { ...task, title: newTask } : task)));
-    setEditing(null);
-    setNewTask("");
+  const editTask = (task) => {
+    setEditingTask(task.id);
+    setTaskTitle(task.title);
+    setAssignedTo(employees.filter(e => task.assignedTo.includes(e.value)));
+    setPriority(priorityOptions.find(p => p.value === task.priority));
+    setStatus(statusOptions.find(s => s.value === task.status));
+    setDueDate(task.dueDate);
   };
 
   // Delete Task
   const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    setTasks(tasks.filter(task => task.id !== id));
   };
 
-  // Toggle Task Completion
-  const toggleTask = (id) => {
-    setTasks(
-      tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task))
-    );
+  // Reset Form
+  const resetForm = () => {
+    setEditingTask(null);
+    setTaskTitle("");
+    setAssignedTo([]);
+    setPriority(priorityOptions[1]);
+    setStatus(statusOptions[0]);
+    setDueDate("");
   };
+
+  // Filter Tasks
+  let filteredTasks = tasks.filter(task =>
+    task.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (priorityFilter) {
+    filteredTasks = filteredTasks.filter(task => task.priority === priorityFilter.value);
+  }
+
+  if (statusFilter) {
+    filteredTasks = filteredTasks.filter(task => task.status === statusFilter.value);
+  }
+
+  // Sort Tasks
+  if (sortBy === "priority") {
+    filteredTasks.sort((a, b) => {
+      const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    });
+  } else if (sortBy === "dueDate") {
+    filteredTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  }
 
   return (
-    <div className="p-6 bg-gray-800 min-h-screen text-gray-200">
-      {/* Page Title */}
+    <div className="p-6 bg-gray-800 min-h-screen text-white">
       <motion.h2
-        className="text-3xl font-bold mb-6 text-white"
+        className="text-3xl font-bold mb-6"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Task Management
+        Task Management System
       </motion.h2>
 
-      {/* Task Input */}
-      <motion.div
-        className="mb-6 flex gap-2"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <input
-          type="text"
-          placeholder="Enter Task"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          className="p-2 bg-gray-800 text-white border border-gray-600 rounded-md"
+      {/* Task Form */}
+      <div className="mb-6 flex flex-col gap-4">
+        <TextField
+          label="Task Title"
+          value={taskTitle}
+          onChange={(e) => setTaskTitle(e.target.value)}
+          fullWidth
+        />
+        <Select
+          options={employees}
+          isMulti
+          placeholder="Assign Employees"
+          value={assignedTo}
+          onChange={setAssignedTo}
+          className="text-black"
+        />
+        <Select
+          options={priorityOptions}
+          placeholder="Select Priority"
+          value={priority}
+          onChange={setPriority}
+          className="text-black"
+        />
+        <Select
+          options={statusOptions}
+          placeholder="Select Status"
+          value={status}
+          onChange={setStatus}
+          className="text-black"
+        />
+        <TextField
+          type="date"
+          label="Due Date"
+          InputLabelProps={{ shrink: true }}
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
         />
         <motion.div whileTap={{ scale: 0.9 }}>
-          {editing ? (
-            <Button variant="contained" color="secondary" onClick={updateTask}>
-              Update
-            </Button>
-          ) : (
-            <Button variant="contained" color="primary" onClick={addTask}>
-              Add
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            color={editingTask ? "secondary" : "primary"}
+            onClick={handleTask}
+          >
+            {editingTask ? "Update Task" : "Add Task"}
+          </Button>
         </motion.div>
-      </motion.div>
+      </div>
+
+      {/* Search & Filters */}
+      <div className="flex gap-4 mb-4">
+        <TextField
+          label="Search Tasks..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          fullWidth
+        />
+        <Select
+          options={priorityOptions}
+          placeholder="Filter by Priority"
+          value={priorityFilter}
+          onChange={setPriorityFilter}
+          isClearable
+          className="text-black"
+        />
+        <Select
+          options={statusOptions}
+          placeholder="Filter by Status"
+          value={statusFilter}
+          onChange={setStatusFilter}
+          isClearable
+          className="text-black"
+        />
+        <Select
+          options={[
+            { value: "priority", label: "Sort by Priority" },
+            { value: "dueDate", label: "Sort by Due Date" },
+          ]}
+          placeholder="Sort Tasks"
+          value={sortBy}
+          onChange={(option) => setSortBy(option ? option.value : null)}
+          isClearable
+          className="text-black"
+        />
+      </div>
 
       {/* Task List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AnimatePresence>
-          {tasks.map((task) => (
-            <motion.div
-              key={task.id}
-              className={`p-4 rounded-lg shadow-lg border border-gray-700 ${task.completed ? "bg-green-700 text-white" : "bg-gray-800 text-gray-200"
-                }`}
-              initial={{ opacity: 0, scale: 0.8, x: -50 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.5, x: 50 }}
-              transition={{ duration: 0.3 }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <h3 className="text-lg font-semibold">{task.title}</h3>
-              <p className="text-sm opacity-80">
-                Status: {task.completed ? "Completed ✅" : "Pending ❌"}
-              </p>
-              <div className="mt-2 flex gap-2">
-                <motion.div whileTap={{ scale: 0.9 }}>
-                  <Button
-                    variant="contained"
-                    style={{
-                      backgroundColor: task.completed ? "#10B981" : "#F59E0B",
-                      color: "#fff",
-                    }}
-                    onClick={() => toggleTask(task.id)}
-                  >
-                    {task.completed ? "Undo" : "Complete"}
-                  </Button>
-                </motion.div>
-                <motion.div whileTap={{ scale: 0.9 }}>
-                  <Button variant="contained" color="info" onClick={() => editTask(task.id)}>
-                    Edit
-                  </Button>
-                </motion.div>
-                <motion.div whileTap={{ scale: 0.9 }}>
-                  <Button variant="contained" color="error" onClick={() => deleteTask(task.id)}>
-                    Delete
-                  </Button>
-                </motion.div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border border-gray-700">
+          <thead className="bg-gray-800">
+            <tr>
+              <th className="border p-2">Task</th>
+              <th className="border p-2">Assigned To</th>
+              <th className="border p-2">Priority</th>
+              <th className="border p-2">Status</th>
+              <th className="border p-2">Due Date</th>
+              <th className="border p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredTasks.map((task) => (
+              <tr key={task.id} className="bg-gray-800">
+                <td className="border p-2">{task.title}</td>
+                <td className="border p-2">{task.assignedTo.join(", ")}</td>
+                <td className="border p-2">{task.priority}</td>
+                <td className="border p-2">{task.status}</td>
+                <td className="border p-2">{task.dueDate}</td>
+                <td className="border p-2">
+                  <Button onClick={() => editTask(task)}>Edit</Button>
+                  <Button onClick={() => deleteTask(task.id)} color="error">Delete</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
