@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import Sidebar from "./components/Sidebar";
@@ -7,6 +7,11 @@ import AdminDashboard from "./pages/AdminDashboard";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import Employees from "./pages/Employees";
 import Tasks from "./pages/Tasks";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import Profile from "./pages/Profile";
+import TeamPage from "./pages/TeamPage";
 import { useAuth } from "./context/AuthContext";
 import { useState } from "react";
 import "./App.css";
@@ -15,44 +20,190 @@ function AppRouter() {
   return (
     <AuthProvider>
       <Router>
-        <MainLayout />
+        <AppRoutes />
       </Router>
     </AuthProvider>
   );
 }
 
-// Layout with Fixed Sidebar & Dynamic Content Alignment
-const MainLayout = () => {
-  const { user } = useAuth(); // Get user role
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
+// Handle all routes and layouts
+const AppRoutes = () => {
+  const { user, loading } = useAuth();
+
+  // Show loading spinner while authentication state is being determined
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex min-h-screen bg-gray-800">
-      {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+    <Routes>
+      {/* Auth Routes - accessible when NOT logged in */}
+      {!user ? (
+        <>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </>
+      ) : (
+        <>
+          {/* Main Layout with Sidebar for authenticated users */}
+          <Route path="/" element={<MainLayout />}>
+            {/* Dashboard routes */}
+            <Route index element={<Dashboard />} />
 
-      {/* Main Content - Adjust margin dynamically */}
-      <div
-        className={`p-6 transition-all duration-300 flex-1 ${isSidebarOpen ? "ml-64" : "ml-20"
-          }`}
-      >
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
+            {/* Admin Routes */}
+            <Route
+              path="admin"
+              element={
+                <ProtectedRoute role="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="employees"
+              element={
+                <ProtectedRoute role="admin">
+                  <Employees />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/employees" element={<ProtectedRoute role="admin"><Employees /></ProtectedRoute>} />
-          <Route path="/tasks" element={<ProtectedRoute role="admin"><Tasks /></ProtectedRoute>} />
+            {/* Common Routes */}
+            <Route
+              path="tasks"
+              element={
+                <ProtectedRoute>
+                  <Tasks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Employee Routes */}
-          <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
-          <Route path="/tasks" element={<ProtectedRoute role="employee"><Tasks /></ProtectedRoute>} />
-        </Routes>
+            {/* Team Lead Routes */}
+            <Route
+              path="team"
+              element={
+                <ProtectedRoute role="team-lead">
+                  <TeamPage />
+                </ProtectedRoute>
+              }
+            />
 
-      </div>
-    </div>
+            {/* Employee Routes */}
+            <Route
+              path="employee"
+              element={
+                <ProtectedRoute role="employee">
+                  <EmployeeDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </>
+      )}
+    </Routes>
   );
 };
 
+// Layout with Fixed Sidebar & Dynamic Content Alignment
+const MainLayout = () => {
+  const { user } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  return (
+    <div className="flex min-h-screen bg-gray-900 text-white">
+      {/* Sidebar */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        userRole={user.role}
+      />
+
+      {/* Main Content - Adjust margin dynamically */}
+      <main
+        className={`p-6 transition-all duration-300 flex-1 ${isSidebarOpen ? "ml-64" : "ml-20"}`}
+      >
+        <Routes>
+          <Route index element={<Dashboard />} />
+
+          {/* Admin Routes */}
+          <Route
+            path="admin"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="employees"
+            element={
+              <ProtectedRoute role="admin">
+                <Employees />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Common Routes */}
+          <Route
+            path="tasks"
+            element={
+              <ProtectedRoute>
+                <Tasks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Team Lead Routes */}
+          <Route
+            path="team"
+            element={
+              <ProtectedRoute role="team-lead">
+                <TeamPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Employee Routes */}
+          <Route
+            path="employee"
+            element={
+              <ProtectedRoute role="employee">
+                <EmployeeDashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </main>
+    </div>
+  );
+};
 
 export default AppRouter;
