@@ -53,7 +53,7 @@ const AppRoutes = () => {
             <Route path="/register" element={<Signup />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/EmployeeSystem/#/" replace />} />
           </>
         ) : (
           <>

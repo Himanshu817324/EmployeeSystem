@@ -58,7 +58,8 @@ export const AuthProvider = ({ children }) => {
     if (currentUsers) localStorage.setItem("users", currentUsers);
 
     setUser(null);
-    window.location.href = "/login";
+    setLoading(false);
+    window.location.href = "/EmployeeSystem/#/login";
   };
 
   return (

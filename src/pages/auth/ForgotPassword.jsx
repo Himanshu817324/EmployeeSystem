@@ -36,12 +36,11 @@ const ForgotPassword = () => {
             Reset Password
           </Button>
         </form>
-        <Typography className="text-white text-center mt-4">
-          Remembered your password?{" "}
-          <Link to="/login" className="text-blue-400 hover:underline">
-            Login
+        <div className="mt-4 text-center">
+          <Link to="/EmployeeSystem/#/login" className="text-blue-400 hover:text-blue-300">
+            Back to Login
           </Link>
-        </Typography>
+        </div>
       </motion.div>
     </div>
   );

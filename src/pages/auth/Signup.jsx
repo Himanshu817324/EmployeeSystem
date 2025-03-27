@@ -49,7 +49,7 @@ const Signup = () => {
         register(userData);
 
         // Redirect after successful signup
-        window.location.hash = "#/";
+        window.location.href = "/EmployeeSystem/#/";
       } catch (error) {
         setSignupError(error.message);
       }
@@ -189,9 +189,9 @@ const Signup = () => {
           </button>
         </form>
 
-        <p className="mt-4 text-center">
-          Already have an account? <Link to="/login" className="text-blue-400 hover:underline">Login</Link>
-        </p>
+        <div className="mt-4 text-center text-gray-400">
+          Already have an account? <Link to="/EmployeeSystem/#/login" className="text-blue-400 hover:underline">Login</Link>
+        </div>
       </motion.div>
     </div>
   );

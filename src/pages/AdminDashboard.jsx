@@ -625,7 +625,7 @@ const AdminDashboard = () => {
             <Button
               variant="contained"
               className="mt-4 bg-cyan-600 hover:bg-cyan-700"
-              href="/tasks"
+              href="/EmployeeSystem/#/tasks"
               sx={{
                 backgroundColor: '#0891b2',
                 '&:hover': {

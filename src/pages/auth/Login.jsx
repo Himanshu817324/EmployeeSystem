@@ -31,7 +31,7 @@ const Login = () => {
       if (user) {
         // Store user in auth context
         login(email, password);
-        window.location.hash = "#/";
+        window.location.href = "/EmployeeSystem/#/";
       } else {
         setError("Invalid email or password");
       }
@@ -148,13 +148,13 @@ const Login = () => {
 
           <div className="mt-4 text-center">
             <span className="text-gray-400">Don't have an account? </span>
-            <Link to="/register" className="text-blue-400 hover:text-blue-300">
+            <Link to="/EmployeeSystem/#/register" className="text-blue-400 hover:text-blue-300">
               Register
             </Link>
           </div>
 
           <div className="mt-2 text-center">
-            <Link to="/forgot-password" className="text-gray-400 hover:text-gray-300 text-sm">
+            <Link to="/EmployeeSystem/#/forgot-password" className="text-gray-400 hover:text-gray-300 text-sm">
               Forgot Password?
             </Link>
           </div>

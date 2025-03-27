@@ -54,7 +54,7 @@ const Profile = () => {
   };
 
   if (!user) {
-    window.location.href = "/login";
+    window.location.href = "/EmployeeSystem/#/login";
     return null;
   }
 
@@ -195,7 +195,7 @@ const Profile = () => {
                 color="error"
                 onClick={() => {
                   logout();
-                  window.location.href = "/login";
+                  window.location.href = "/EmployeeSystem/#/login";
                 }}
                 className="mt-6 bg-red-500 hover:bg-red-600"
               >
