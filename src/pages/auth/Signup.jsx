@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Visibility, VisibilityOff, Lock, Person, Email } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 // eslint-disable-next-line no-unused-vars
@@ -16,7 +16,6 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [signupError, setSignupError] = useState("");
-  const navigate = useNavigate();
   const { register } = useAuth();
 
   const validateForm = () => {
@@ -49,8 +48,8 @@ const Signup = () => {
         // Register user (this will also log them in)
         register(userData);
 
-        // Redirect based on role
-        navigate(role === "admin" ? "/admin" : "/employee");
+        // Redirect after successful signup
+        window.location.href = "/";
       } catch (error) {
         setSignupError(error.message);
       }

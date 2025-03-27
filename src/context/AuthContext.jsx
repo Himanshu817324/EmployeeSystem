@@ -8,44 +8,57 @@ export const AuthProvider = ({ children }) => {
 
   // Load user from localStorage on initial render
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("currentUser");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
     setLoading(false);
   }, []);
 
-  // Login user
-  const login = (userData) => {
-    // Save to localStorage
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
+  // Register a new user
+  const register = (userData) => {
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const newUser = {
+      ...userData,
+      id: Date.now().toString()
+    };
+    users.push(newUser);
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("currentUser", JSON.stringify(newUser));
+    setUser(newUser);
+    return newUser;
   };
 
-  // Register user
-  const register = (userData) => {
-    // Get existing users or create empty array
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
+  // Login user
+  const login = (email, password) => {
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const foundUser = users.find(
+      user => user.email === email && user.password === password
+    );
 
-    // Check if email already exists
-    if (users.some(user => user.email === userData.email)) {
-      throw new Error('Email already exists');
+    if (foundUser) {
+      localStorage.setItem("currentUser", JSON.stringify(foundUser));
+      setUser(foundUser);
+      return foundUser;
     }
-
-    // Add new user
-    users.push(userData);
-
-    // Save updated users
-    localStorage.setItem('users', JSON.stringify(users));
-
-    // Log user in
-    login(userData);
+    return null;
   };
 
   // Logout user
   const logout = () => {
-    localStorage.removeItem('user');
+    // Save current tasks and users before logout
+    const currentTasks = localStorage.getItem("tasks");
+    const currentUsers = localStorage.getItem("users");
+
+    // Clear localStorage (but don't remove tasks and users)
+    localStorage.removeItem("currentUser");
+
+    // Restore tasks and users
+    if (currentTasks) localStorage.setItem("tasks", currentTasks);
+    if (currentUsers) localStorage.setItem("users", currentUsers);
+
     setUser(null);
+    window.location.href = "/login";
   };
 
   return (

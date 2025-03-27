@@ -2,8 +2,8 @@
 
 /* Global Styles */
 body {
-  background-color: #111827; /* gray-900 */
-  color: #f3f4f6; /* gray-100 */
+  background-color: #0f172a; /* slate-900 */
+  color: #f1f5f9; /* slate-100 */
   font-family: "Inter", sans-serif;
 }
 
@@ -14,16 +14,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(31, 41, 55, 0.5); /* gray-800 with opacity */
+  background: rgba(30, 41, 59, 0.5); /* slate-800 with opacity */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(75, 85, 99, 0.5); /* gray-600 with opacity */
+  background: rgba(71, 85, 105, 0.5); /* slate-600 with opacity */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(107, 114, 128, 0.7); /* gray-500 with opacity */
+  background: rgba(100, 116, 139, 0.7); /* slate-500 with opacity */
 }
 
 /* Add blurred glass effect for cards */
@@ -38,4 +38,179 @@ body {
 
 .MuiChip-root {
   font-weight: 500 !important;
+}
+
+/* MUI Dialog overrides */
+.MuiDialog-paper {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+/* MUI Menu/Select overrides */
+.MuiMenu-paper,
+.MuiPopover-paper {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important; /* slate-100 */
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+.MuiMenuItem-root {
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+.MuiMenuItem-root:hover {
+  background-color: rgba(
+    14,
+    165,
+    233,
+    0.1
+  ) !important; /* sky-500 with low opacity */
+}
+
+.MuiMenuItem-root.Mui-selected {
+  background-color: rgba(
+    14,
+    165,
+    233,
+    0.2
+  ) !important; /* sky-500 with low opacity */
+}
+
+/* MUI Input overrides */
+.MuiOutlinedInput-notchedOutline {
+  border-color: rgba(71, 85, 105, 0.5) !important; /* slate-600 with opacity */
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(6, 182, 212, 0.5) !important; /* cyan-500 with opacity */
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(6, 182, 212, 0.8) !important; /* cyan-500 with opacity */
+}
+
+/* MUI Table overrides */
+.MuiTableHead-root .MuiTableCell-root {
+  background-color: rgba(
+    30,
+    41,
+    59,
+    0.7
+  ) !important; /* slate-800 with opacity */
+  color: #e2e8f0 !important; /* slate-200 */
+  font-weight: 600 !important;
+}
+
+.MuiTableBody-root .MuiTableCell-root {
+  color: #e2e8f0 !important; /* slate-200 */
+  border-bottom: 1px solid rgba(71, 85, 105, 0.2) !important; /* slate-600 with opacity */
+}
+
+.MuiTableRow-root:hover {
+  background-color: rgba(
+    30,
+    41,
+    59,
+    0.6
+  ) !important; /* slate-800 with opacity */
+}
+
+/* Additional MUI components */
+.MuiPaper-root {
+  background-color: transparent !important;
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+.MuiDivider-root {
+  background-color: rgba(
+    71,
+    85,
+    105,
+    0.3
+  ) !important; /* slate-600 with opacity */
+}
+
+.MuiTabs-indicator {
+  background-color: #06b6d4 !important; /* cyan-500 */
+}
+
+.MuiTab-root {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+.MuiTab-root.Mui-selected {
+  color: #06b6d4 !important; /* cyan-500 */
+}
+
+.MuiLinearProgress-root {
+  background-color: rgba(
+    30,
+    41,
+    59,
+    0.5
+  ) !important; /* slate-800 with opacity */
+}
+
+.MuiLinearProgress-bar {
+  background-color: #06b6d4 !important; /* cyan-500 */
+}
+
+.MuiAlert-root {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+.MuiAlert-standardSuccess {
+  background-color: rgba(
+    16,
+    185,
+    129,
+    0.2
+  ) !important; /* emerald-500 with opacity */
+  color: #d1fae5 !important; /* emerald-100 */
+}
+
+.MuiAlert-standardError {
+  background-color: rgba(
+    239,
+    68,
+    68,
+    0.2
+  ) !important; /* red-500 with opacity */
+  color: #fee2e2 !important; /* red-100 */
+}
+
+.MuiAlert-standardWarning {
+  background-color: rgba(
+    245,
+    158,
+    11,
+    0.2
+  ) !important; /* amber-500 with opacity */
+  color: #fef3c7 !important; /* amber-100 */
+}
+
+.MuiAlert-standardInfo {
+  background-color: rgba(
+    6,
+    182,
+    212,
+    0.2
+  ) !important; /* cyan-500 with opacity */
+  color: #cffafe !important; /* cyan-100 */
+}
+
+.MuiTooltip-tooltip {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #f1f5f9 !important; /* slate-100 */
+  border: 1px solid rgba(71, 85, 105, 0.5) !important; /* slate-600 with opacity */
+}
+
+/* Line clamp for text truncation */
+.line-clamp-1 {
+  display: -webkit-box;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

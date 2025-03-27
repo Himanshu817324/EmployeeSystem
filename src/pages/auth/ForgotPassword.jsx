@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { TextField, Button, Typography } from "@mui/material";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 const ForgotPassword = () => {

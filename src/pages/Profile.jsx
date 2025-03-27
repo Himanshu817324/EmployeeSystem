@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { TextField, Button, Avatar, Paper, Box, Typography, Chip } from "@mui/material";
 import { Edit, Person, Email, Work, EventNote, Save, Cancel } from "@mui/icons-material";
 
 const Profile = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [email] = useState(user?.email || ""); // Email cannot be changed
@@ -29,7 +27,7 @@ const Profile = () => {
 
     // Update the current user in localStorage
     const updatedUser = { ...user, name };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
     // Refresh the page to see changes
     window.location.reload();
@@ -56,7 +54,7 @@ const Profile = () => {
   };
 
   if (!user) {
-    navigate("/login");
+    window.location.href = "/login";
     return null;
   }
 
@@ -197,7 +195,7 @@ const Profile = () => {
                 color="error"
                 onClick={() => {
                   logout();
-                  navigate("/login");
+                  window.location.href = "/login";
                 }}
                 className="mt-6 bg-red-500 hover:bg-red-600"
               >

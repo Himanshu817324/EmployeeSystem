@@ -13,8 +13,11 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import Profile from "./pages/Profile";
 import TeamPage from "./pages/TeamPage";
 import { useAuth } from "./context/AuthContext";
-import { useState } from "react";
 import "./App.css";
+import { useState, createContext, useContext } from "react";
+
+// Create sidebar context
+const SidebarContext = createContext();
 
 function AppRouter() {
   return (
@@ -29,121 +32,121 @@ function AppRouter() {
 // Handle all routes and layouts
 const AppRoutes = () => {
   const { user, loading } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Show loading spinner while authentication state is being determined
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex justify-center items-center h-screen bg-slate-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
       </div>
     );
   }
 
   return (
-    <Routes>
-      {/* Auth Routes - accessible when NOT logged in */}
-      {!user ? (
-        <>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </>
-      ) : (
-        <>
-          {/* Main Layout with Sidebar for authenticated users */}
-          <Route path="/" element={<MainLayout />}>
-            {/* Dashboard routes */}
-            <Route index element={<Dashboard />} />
+    <SidebarContext.Provider value={{ isSidebarOpen, setIsSidebarOpen }}>
+      <Routes>
+        {/* Auth Routes - accessible when NOT logged in */}
+        {!user ? (
+          <>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Signup />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </>
+        ) : (
+          <>
+            {/* Main Layout with Sidebar for authenticated users */}
+            <Route path="/*" element={<MainLayout />}>
+              {/* Dashboard routes */}
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
 
-            {/* Admin Routes */}
-            <Route
-              path="admin"
-              element={
-                <ProtectedRoute role="admin">
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="employees"
-              element={
-                <ProtectedRoute role="admin">
-                  <Employees />
-                </ProtectedRoute>
-              }
-            />
+              {/* Admin Routes */}
+              <Route
+                path="admin"
+                element={
+                  <ProtectedRoute role="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="employees"
+                element={
+                  <ProtectedRoute role="admin">
+                    <Employees />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Common Routes */}
-            <Route
-              path="tasks"
-              element={
-                <ProtectedRoute>
-                  <Tasks />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
+              {/* Common Routes */}
+              <Route
+                path="tasks"
+                element={
+                  <ProtectedRoute>
+                    <Tasks />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Team Lead Routes */}
-            <Route
-              path="team"
-              element={
-                <ProtectedRoute role="team-lead">
-                  <TeamPage />
-                </ProtectedRoute>
-              }
-            />
+              {/* Team Lead Routes */}
+              <Route
+                path="team"
+                element={
+                  <ProtectedRoute role="team-lead">
+                    <TeamPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Employee Routes */}
-            <Route
-              path="employee"
-              element={
-                <ProtectedRoute role="employee">
-                  <EmployeeDashboard />
-                </ProtectedRoute>
-              }
-            />
+              {/* Employee Routes */}
+              <Route
+                path="employee"
+                element={
+                  <ProtectedRoute role="employee">
+                    <EmployeeDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        </>
-      )}
-    </Routes>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
+          </>
+        )}
+      </Routes>
+    </SidebarContext.Provider>
   );
 };
 
 // Layout with Fixed Sidebar & Dynamic Content Alignment
 const MainLayout = () => {
   const { user } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
 
   if (!user) {
     return <Navigate to="/login" />;
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-white">
+    <div className="flex min-h-screen bg-slate-900 text-slate-100">
       {/* Sidebar */}
-      <Sidebar
-        isOpen={isSidebarOpen}
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-        userRole={user.role}
-      />
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
-      {/* Main Content - Adjust margin dynamically */}
-      <main
-        className={`p-6 transition-all duration-300 flex-1 ${isSidebarOpen ? "ml-64" : "ml-20"}`}
-      >
+      {/* Main Content - Adjusts margin based on sidebar state */}
+      <main className={`p-6 transition-all duration-300 flex-1 ${isSidebarOpen ? 'ml-[220px]' : 'ml-[60px]'}`}>
         <Routes>
           <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
 
           {/* Admin Routes */}
           <Route

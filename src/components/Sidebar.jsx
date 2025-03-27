@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   Menu as MenuIcon,
   Dashboard,
@@ -7,7 +7,11 @@ import {
   Assignment,
   Person,
   Logout,
-  SupervisorAccount
+  SupervisorAccount,
+  Group,
+  ExitToApp,
+  AdminPanelSettings,
+  Close
 } from "@mui/icons-material";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
@@ -15,7 +19,6 @@ import { useAuth } from "../context/AuthContext";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   // Define menu items based on role
   const getMenuItems = () => {
@@ -46,7 +49,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
   };
 
   // Filter menu items based on user role
@@ -56,7 +58,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <motion.div
-      className="bg-gray-900 text-white h-screen fixed top-0 left-0 z-50 flex flex-col transition-all shadow-lg border-r border-gray-800"
+      className="bg-gray-900 text-white h-screen fixed top-0 left-0 z-50 flex flex-col transition-all shadow-lg border-r border-gray-800 overflow-hidden"
       animate={{ width: isOpen ? 220 : 60 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
     >
@@ -64,11 +66,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       <div className="flex items-center justify-between p-3 border-b border-gray-800">
         {isOpen && <span className="font-bold text-blue-400">EMS</span>}
         <motion.button
-          className="p-1 hover:bg-gray-800 rounded-full"
+          className={`hover:bg-gray-800 rounded-full flex items-center justify-center ${isOpen ? 'p-1' : 'p-1'}`}
           onClick={toggleSidebar}
           whileTap={{ scale: 0.9 }}
         >
-          <MenuIcon />
+          {isOpen ?
+            <Close className="text-xl" /> :
+            <MenuIcon className="text-xs text-blue-400" />
+          }
         </motion.button>
       </div>
 

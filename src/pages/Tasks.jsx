@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 
 // Priority color mapping
 const priorityColors = {
+  "Urgent": "bg-purple-500/20 text-purple-400 border-purple-600/30",
   "High": "bg-red-500/20 text-red-400 border-red-600/30",
   "Medium": "bg-yellow-500/20 text-yellow-400 border-yellow-600/30",
   "Low": "bg-green-500/20 text-green-400 border-green-600/30"
@@ -13,23 +14,24 @@ const priorityColors = {
 
 // Status color mapping
 const statusColors = {
-  "To Do": "bg-gray-500/20 text-gray-400 border-gray-600/30",
+  "Not Started": "bg-gray-500/20 text-gray-400 border-gray-600/30",
   "In Progress": "bg-blue-500/20 text-blue-400 border-blue-600/30",
   "Completed": "bg-green-500/20 text-green-400 border-green-600/30"
 };
 
 // Status options
 const statusOptions = [
-  { value: "To Do", label: "To Do" },
+  { value: "Not Started", label: "Not Started" },
   { value: "In Progress", label: "In Progress" },
   { value: "Completed", label: "Completed" },
 ];
 
 // Priority options
 const priorityOptions = [
-  { value: "Low", label: "Low" },
-  { value: "Medium", label: "Medium" },
+  { value: "Urgent", label: "Urgent" },
   { value: "High", label: "High" },
+  { value: "Medium", label: "Medium" },
+  { value: "Low", label: "Low" },
 ];
 
 const customSelectStyles = {
@@ -69,6 +71,15 @@ const customSelectStyles = {
   menu: (styles) => ({
     ...styles,
     backgroundColor: 'white',
+    zIndex: 9999,
+  }),
+  menuPortal: (styles) => ({
+    ...styles,
+    zIndex: 9999,
+  }),
+  menuList: (styles) => ({
+    ...styles,
+    zIndex: 9999,
   }),
   placeholder: (styles) => ({
     ...styles,
@@ -99,75 +110,106 @@ const Tasks = () => {
   const [taskDescription, setTaskDescription] = useState("");
   const [assignedTo, setAssignedTo] = useState([]);
   const [priority, setPriority] = useState(priorityOptions[1]);
-  const [status, setStatus] = useState(statusOptions[0]);
+  const [status, setStatus] = useState(statusOptions[1]);
   const [dueDate, setDueDate] = useState("");
 
   // Load tasks and users from localStorage
   useEffect(() => {
-    const savedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    try {
+      const savedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+      setTasks(savedTasks);
 
-    // Get all registered users for employee list
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const employeeOptions = users.map(user => ({
-      value: user.id,
-      label: user.name,
-      email: user.email,
-      role: user.role
-    }));
+      // Get all registered users for employee list
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const employeeOptions = users.map(user => ({
+        value: user.id,
+        label: user.name,
+        email: user.email,
+        role: user.role
+      }));
 
-    setEmployees(employeeOptions);
-    setTasks(savedTasks);
+      setEmployees(employeeOptions);
+    } catch (error) {
+      console.error("Error loading tasks or users:", error);
+      // Fallback to empty arrays if there's an error
+      setTasks([]);
+      setEmployees([]);
+    }
   }, []);
 
   // Save tasks to localStorage
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    try {
+      if (tasks && tasks.length > 0) {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+      }
+    } catch (error) {
+      console.error("Error saving tasks to localStorage:", error);
+    }
   }, [tasks]);
 
   // Add or Update Task
   const handleTask = () => {
     if (taskTitle.trim()) {
-      const taskData = {
-        title: taskTitle,
-        description: taskDescription,
-        assignedTo: assignedTo.map(e => ({
-          id: e.value,
-          name: e.label,
-          email: e.email
-        })),
-        assignedBy: {
-          id: user.id,
-          name: user.name,
-          email: user.email
-        },
-        priority: priority.value,
-        status: status.value,
-        dueDate,
-        comments: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
+      try {
+        // Get current tasks from localStorage to ensure we have the latest
+        const currentTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-      if (editingTask) {
-        // Update Task
-        setTasks(tasks.map(task =>
-          task.id === editingTask ? {
-            ...task,
-            ...taskData,
-            comments: task.comments,
-            createdAt: task.createdAt,
-            updatedAt: new Date().toISOString()
-          } : task
-        ));
-      } else {
-        // Add New Task
-        const newTask = {
-          id: Date.now().toString(),
-          ...taskData
+        const taskData = {
+          title: taskTitle,
+          description: taskDescription,
+          assignedTo: assignedTo.map(e => ({
+            id: e.value,
+            name: e.label,
+            email: e.email,
+            role: e.role
+          })),
+          assignedBy: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+          },
+          priority: priority.value,
+          status: status.value,
+          dueDate,
+          comments: [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         };
-        setTasks([...tasks, newTask]);
+
+        let updatedTasks;
+
+        if (editingTask) {
+          // Update Task
+          updatedTasks = currentTasks.map(task =>
+            task.id === editingTask ? {
+              ...task,
+              ...taskData,
+              comments: task.comments,
+              createdAt: task.createdAt,
+              updatedAt: new Date().toISOString()
+            } : task
+          );
+        } else {
+          // Add New Task
+          const newTask = {
+            id: Date.now().toString(),
+            ...taskData
+          };
+          updatedTasks = [...currentTasks, newTask];
+        }
+
+        // Save to localStorage first
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+
+        // Update state
+        setTasks(updatedTasks);
+        resetForm();
+      } catch (error) {
+        console.error("Error saving task:", error);
+        alert("There was an error saving the task. Please try again.");
       }
-      resetForm();
     }
   };
 
@@ -192,7 +234,13 @@ const Tasks = () => {
 
   // Delete Task
   const deleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+    try {
+      const updatedTasks = tasks.filter(task => task.id !== id);
+      setTasks(updatedTasks);
+      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
 
   // Reset Form
@@ -202,7 +250,7 @@ const Tasks = () => {
     setTaskDescription("");
     setAssignedTo([]);
     setPriority(priorityOptions[1]);
-    setStatus(statusOptions[0]);
+    setStatus(statusOptions[1]);
     setDueDate("");
   };
 
@@ -212,11 +260,19 @@ const Tasks = () => {
   );
 
   // If user is employee, only show tasks assigned to them
-  if (user.role === "employee") {
-    filteredTasks = filteredTasks.filter(task =>
-      task.assignedTo.some(person => person.id === user.id)
-    );
-  }
+  // if (user.role === "employee") {
+  //   filteredTasks = filteredTasks.filter(task =>
+  //     task.assignedTo.some(person => person.id === user.id)
+  //   );
+  // }
+
+  // If user is team lead, show tasks assigned to their team members
+  // if (user.role === "team-lead") {
+  //   const teamMembers = employees.filter(e => e.role === "employee").map(e => e.value);
+  //   filteredTasks = filteredTasks.filter(task =>
+  //     task.assignedTo.some(person => teamMembers.includes(person.id))
+  //   );
+  // }
 
   // Apply filters
   if (priorityFilter) {
@@ -230,7 +286,7 @@ const Tasks = () => {
   // Sort Tasks
   if (sortBy === "priority") {
     filteredTasks.sort((a, b) => {
-      const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+      const priorityOrder = { Urgent: 0, High: 1, Medium: 2, Low: 3 };
       return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
   } else if (sortBy === "dueDate") {
@@ -310,6 +366,7 @@ const Tasks = () => {
               value={assignedTo}
               onChange={setAssignedTo}
               styles={customSelectStyles}
+              menuPortalTarget={document.body}
             />
           </div>
 
@@ -321,6 +378,7 @@ const Tasks = () => {
               value={priority}
               onChange={setPriority}
               styles={customSelectStyles}
+              menuPortalTarget={document.body}
             />
           </div>
 
@@ -332,6 +390,7 @@ const Tasks = () => {
               value={status}
               onChange={setStatus}
               styles={customSelectStyles}
+              menuPortalTarget={document.body}
             />
           </div>
         </div>
@@ -383,6 +442,7 @@ const Tasks = () => {
               onChange={setPriorityFilter}
               isClearable
               styles={customSelectStyles}
+              menuPortalTarget={document.body}
             />
           </div>
 
@@ -395,6 +455,7 @@ const Tasks = () => {
               onChange={setStatusFilter}
               isClearable
               styles={customSelectStyles}
+              menuPortalTarget={document.body}
             />
           </div>
 
@@ -410,6 +471,7 @@ const Tasks = () => {
               onChange={(option) => setSortBy(option ? option.value : null)}
               isClearable
               styles={customSelectStyles}
+              menuPortalTarget={document.body}
             />
           </div>
         </div>
@@ -429,6 +491,7 @@ const Tasks = () => {
                 <tr className="border-b border-gray-700 text-left">
                   <th className="p-4">Task</th>
                   <th className="p-4">Assigned To</th>
+                  <th className="p-4">Assigned By</th>
                   <th className="p-4">Priority</th>
                   <th className="p-4">Status</th>
                   <th className="p-4">Due Date</th>
@@ -455,6 +518,15 @@ const Tasks = () => {
                           />
                         ))}
                       </div>
+                    </td>
+                    <td className="p-4">
+                      {task.assignedBy && (
+                        <Chip
+                          label={task.assignedBy.name}
+                          size="small"
+                          className="bg-purple-500/20 text-purple-300"
+                        />
+                      )}
                     </td>
                     <td className="p-4">
                       <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${priorityColors[task.priority]}`}>

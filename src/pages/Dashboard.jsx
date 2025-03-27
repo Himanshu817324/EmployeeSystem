@@ -5,6 +5,7 @@ import {
   Schedule, CalendarMonth, WorkOutline
 } from '@mui/icons-material';
 import { Paper, Typography, LinearProgress, Box, Chip, Avatar } from '@mui/material';
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
@@ -77,7 +78,7 @@ const Particles = ({ count = 100 }) => {
       </bufferGeometry>
       <pointsMaterial
         size={0.05}
-        color="#60a5fa"
+        color="#22d3ee"
         transparent
         opacity={0.6}
         sizeAttenuation
@@ -112,35 +113,24 @@ const Dashboard = () => {
 
   useEffect(() => {
     // Load tasks from localStorage
-    const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const savedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
     // Get all users for employees count
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     setEmployees(users.filter(u => u.id !== user.id));
 
-    // Filter tasks based on user role
-    let userTasks = [];
-    if (user.role === 'admin') {
-      // Admins see all tasks
-      userTasks = savedTasks;
-    } else {
-      // Other users only see tasks assigned to them
-      userTasks = savedTasks.filter(task =>
-        task.assignedTo.some(person => person.id === user.id)
-      );
-    }
-
-    setTasks(userTasks);
+    // Show all tasks to everyone
+    setTasks(savedTasks);
 
     // Calculate statistics
-    const total = userTasks.length;
-    const completed = userTasks.filter(task => task.status === 'Completed').length;
-    const inProgress = userTasks.filter(task => task.status === 'In Progress').length;
-    const pending = userTasks.filter(task => task.status === 'To Do').length;
+    const total = savedTasks.length;
+    const completed = savedTasks.filter(task => task.status === 'Completed').length;
+    const inProgress = savedTasks.filter(task => task.status === 'In Progress').length;
+    const pending = savedTasks.filter(task => task.status === 'Not Started').length;
     const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
 
     setStats({ total, completed, inProgress, pending, completionRate });
-  }, [user.id, user.role]);
+  }, [user.id]);
 
   // Get recent tasks (last 5)
   const recentTasks = [...tasks]
@@ -162,9 +152,9 @@ const Dashboard = () => {
 
   // Status color mapping
   const statusColors = {
-    "To Do": "bg-gray-500/20 text-gray-400 border-gray-600/30",
-    "In Progress": "bg-blue-500/20 text-blue-400 border-blue-600/30",
-    "Completed": "bg-green-500/20 text-green-400 border-green-600/30"
+    "Not Started": "bg-slate-700/30 text-slate-300 border-slate-600/30",
+    "In Progress": "bg-cyan-800/30 text-cyan-300 border-cyan-700/30",
+    "Completed": "bg-green-800/30 text-green-300 border-green-700/30"
   };
 
   // Framer motion variants
@@ -209,10 +199,10 @@ const Dashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Typography variant="h4" className="font-bold text-white mb-2">
+        <Typography variant="h4" className="font-bold text-slate-100 mb-2">
           Welcome, {user.name}!
         </Typography>
-        <div className="flex items-center text-gray-400">
+        <div className="flex items-center text-slate-400">
           <Schedule className="mr-2" />
           <Typography>
             {dayName}, {dateStr}
@@ -220,23 +210,23 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* Stats Cards */}
+      {/* Statistics Cards */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+        className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Total Tasks Card */}
         <motion.div variants={itemVariants}>
-          <Paper className="p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg hover:border-blue-500/30 transition-all">
+          <Paper className="p-6 bg-slate-900/70 backdrop-blur-sm border border-slate-700 rounded-lg hover:border-cyan-500/30 transition-all shadow-lg" elevation={0}>
             <div className="flex items-center justify-between">
               <div>
-                <Typography variant="subtitle2" className="text-gray-400">Total Tasks</Typography>
-                <Typography variant="h4" className="font-bold text-white">{stats.total}</Typography>
+                <Typography variant="subtitle2" className="text-slate-400">Total Tasks</Typography>
+                <Typography variant="h4" className="font-bold text-slate-100">{stats.total}</Typography>
               </div>
-              <div className="p-3 rounded-full bg-blue-500/20">
-                <Assignment className="text-blue-400 text-3xl" />
+              <div className="p-3 rounded-full bg-cyan-800/30">
+                <Assignment className="text-cyan-300 text-3xl" />
               </div>
             </div>
           </Paper>
@@ -244,14 +234,14 @@ const Dashboard = () => {
 
         {/* Completed Tasks Card */}
         <motion.div variants={itemVariants}>
-          <Paper className="p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg hover:border-green-500/30 transition-all">
+          <Paper className="p-6 bg-slate-900/70 backdrop-blur-sm border border-slate-700 rounded-lg hover:border-green-500/30 transition-all shadow-lg" elevation={0}>
             <div className="flex items-center justify-between">
               <div>
-                <Typography variant="subtitle2" className="text-gray-400">Completed</Typography>
-                <Typography variant="h4" className="font-bold text-white">{stats.completed}</Typography>
+                <Typography variant="subtitle2" className="text-slate-400">Completed</Typography>
+                <Typography variant="h4" className="font-bold text-slate-100">{stats.completed}</Typography>
               </div>
-              <div className="p-3 rounded-full bg-green-500/20">
-                <Done className="text-green-400 text-3xl" />
+              <div className="p-3 rounded-full bg-green-800/30">
+                <Done className="text-green-300 text-3xl" />
               </div>
             </div>
           </Paper>
@@ -259,14 +249,14 @@ const Dashboard = () => {
 
         {/* In Progress Tasks Card */}
         <motion.div variants={itemVariants}>
-          <Paper className="p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg hover:border-yellow-500/30 transition-all">
+          <Paper className="p-6 bg-slate-900/70 backdrop-blur-sm border border-slate-700 rounded-lg hover:border-cyan-500/30 transition-all shadow-lg" elevation={0}>
             <div className="flex items-center justify-between">
               <div>
-                <Typography variant="subtitle2" className="text-gray-400">In Progress</Typography>
-                <Typography variant="h4" className="font-bold text-white">{stats.inProgress}</Typography>
+                <Typography variant="subtitle2" className="text-slate-400">In Progress</Typography>
+                <Typography variant="h4" className="font-bold text-slate-100">{stats.inProgress}</Typography>
               </div>
-              <div className="p-3 rounded-full bg-yellow-500/20">
-                <Pending className="text-yellow-400 text-3xl" />
+              <div className="p-3 rounded-full bg-cyan-800/30">
+                <AccessTime className="text-cyan-300 text-3xl" />
               </div>
             </div>
           </Paper>
@@ -274,14 +264,14 @@ const Dashboard = () => {
 
         {/* Pending Tasks Card */}
         <motion.div variants={itemVariants}>
-          <Paper className="p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg hover:border-red-500/30 transition-all">
+          <Paper className="p-6 bg-slate-900/70 backdrop-blur-sm border border-slate-700 rounded-lg hover:border-amber-500/30 transition-all shadow-lg" elevation={0}>
             <div className="flex items-center justify-between">
               <div>
-                <Typography variant="subtitle2" className="text-gray-400">To Do</Typography>
-                <Typography variant="h4" className="font-bold text-white">{stats.pending}</Typography>
+                <Typography variant="subtitle2" className="text-slate-400">Pending</Typography>
+                <Typography variant="h4" className="font-bold text-slate-100">{stats.pending}</Typography>
               </div>
-              <div className="p-3 rounded-full bg-red-500/20">
-                <AccessTime className="text-red-400 text-3xl" />
+              <div className="p-3 rounded-full bg-amber-800/30">
+                <Pending className="text-amber-300 text-3xl" />
               </div>
             </div>
           </Paper>
@@ -291,8 +281,8 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Task Completion Progress with 3D visualization */}
-        <Paper className="p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg lg:col-span-1">
-          <Typography variant="h6" className="font-semibold text-white mb-4">
+        <Paper className="p-6 bg-slate-900/70 backdrop-blur-sm border border-slate-700 rounded-lg lg:col-span-1" elevation={0}>
+          <Typography variant="h6" className="font-semibold text-slate-100 mb-4">
             Task Completion
           </Typography>
 
@@ -303,18 +293,18 @@ const Dashboard = () => {
           </div>
 
           <div className="text-center my-4">
-            <Typography variant="h4" className="font-bold text-white">{stats.completionRate}%</Typography>
-            <Typography variant="body2" className="text-gray-400">Task Completion Rate</Typography>
+            <Typography variant="h4" className="font-bold text-slate-100">{stats.completionRate}%</Typography>
+            <Typography variant="body2" className="text-slate-400">Task Completion Rate</Typography>
           </div>
 
           <div className="space-y-4">
             <div>
               <div className="flex justify-between mb-1">
-                <Typography variant="body2" className="text-gray-400 flex items-center">
-                  <Done fontSize="small" className="mr-1 text-green-400" />
+                <Typography variant="body2" className="text-slate-400 flex items-center">
+                  <Done fontSize="small" className="mr-1 text-green-300" />
                   Completed
                 </Typography>
-                <Typography variant="body2" className="text-gray-400">{stats.completed}/{stats.total}</Typography>
+                <Typography variant="body2" className="text-slate-400">{stats.completed}/{stats.total}</Typography>
               </div>
               <LinearProgress
                 variant="determinate"
@@ -322,7 +312,7 @@ const Dashboard = () => {
                 sx={{
                   height: 8,
                   borderRadius: 2,
-                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  backgroundColor: 'rgba(15,23,42,0.7)',
                   '& .MuiLinearProgress-bar': {
                     backgroundColor: '#4ade80'
                   }
@@ -332,11 +322,11 @@ const Dashboard = () => {
 
             <div>
               <div className="flex justify-between mb-1">
-                <Typography variant="body2" className="text-gray-400 flex items-center">
-                  <Pending fontSize="small" className="mr-1 text-yellow-400" />
+                <Typography variant="body2" className="text-slate-400 flex items-center">
+                  <Pending fontSize="small" className="mr-1 text-amber-300" />
                   In Progress
                 </Typography>
-                <Typography variant="body2" className="text-gray-400">
+                <Typography variant="body2" className="text-slate-400">
                   {stats.inProgress}/{stats.total}
                 </Typography>
               </div>
@@ -346,7 +336,7 @@ const Dashboard = () => {
                 sx={{
                   height: 8,
                   borderRadius: 2,
-                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  backgroundColor: 'rgba(15,23,42,0.7)',
                   '& .MuiLinearProgress-bar': {
                     backgroundColor: '#facc15'
                   }
@@ -356,11 +346,11 @@ const Dashboard = () => {
 
             <div>
               <div className="flex justify-between mb-1">
-                <Typography variant="body2" className="text-gray-400 flex items-center">
-                  <AccessTime fontSize="small" className="mr-1 text-red-400" />
+                <Typography variant="body2" className="text-slate-400 flex items-center">
+                  <AccessTime fontSize="small" className="mr-1 text-red-300" />
                   To Do
                 </Typography>
-                <Typography variant="body2" className="text-gray-400">
+                <Typography variant="body2" className="text-slate-400">
                   {stats.pending}/{stats.total}
                 </Typography>
               </div>
@@ -370,7 +360,7 @@ const Dashboard = () => {
                 sx={{
                   height: 8,
                   borderRadius: 2,
-                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  backgroundColor: 'rgba(15,23,42,0.7)',
                   '& .MuiLinearProgress-bar': {
                     backgroundColor: '#ef4444'
                   }
@@ -381,15 +371,15 @@ const Dashboard = () => {
         </Paper>
 
         {/* Recent Activity */}
-        <Paper className="p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg lg:col-span-2">
-          <Typography variant="h6" className="font-semibold text-white mb-4 flex items-center">
-            <CalendarMonth className="mr-2 text-blue-400" />
+        <Paper className="p-6 bg-slate-900/70 backdrop-blur-sm border border-slate-700 rounded-lg lg:col-span-2" elevation={0}>
+          <Typography variant="h6" className="font-semibold text-slate-100 mb-4 flex items-center">
+            <CalendarMonth className="mr-2 text-cyan-400" />
             Recent Activity
           </Typography>
 
           {recentTasks.length === 0 ? (
             <motion.div
-              className="text-center py-8 text-gray-400"
+              className="text-center py-8 text-slate-400"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -404,44 +394,48 @@ const Dashboard = () => {
               initial="hidden"
               animate="visible"
             >
-              {recentTasks.map(task => (
+              {recentTasks.map((task) => (
                 <motion.div
                   key={task.id}
-                  className="border-b border-gray-700 pb-4 last:border-0"
                   variants={itemVariants}
+                  className="border-b border-slate-700/50 pb-4 last:border-0"
                 >
                   <div className="flex justify-between items-start">
-                    <div className="flex items-start">
-                      <Avatar
-                        className="bg-blue-500 mr-3 mt-1"
-                        sx={{ width: 40, height: 40, bgcolor: '#3b82f6' }}
-                      >
-                        <Person fontSize="small" />
-                      </Avatar>
-                      <div>
-                        <Typography className="font-medium text-white">{task.title}</Typography>
-                        <Typography variant="body2" className="text-gray-400">
-                          {task.description ? (
-                            task.description.length > 60 ?
-                              `${task.description.substring(0, 60)}...` :
-                              task.description
-                          ) : "No description provided"}
-                        </Typography>
-
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          <Chip
-                            label={task.status}
-                            size="small"
-                            className={statusColors[task.status]}
-                          />
-
-                          <Typography variant="caption" className="text-gray-500 flex items-center">
-                            <AccessTime fontSize="inherit" className="mr-1" />
-                            {getRelativeTime(task.updatedAt)}
-                          </Typography>
-                        </div>
-                      </div>
+                    <div>
+                      <Typography variant="subtitle1" className="font-medium text-slate-200">
+                        {task.title}
+                      </Typography>
+                      <Typography variant="body2" className="text-slate-400 mb-2 line-clamp-1">
+                        {task.description}
+                      </Typography>
                     </div>
+                    <Chip
+                      label={task.status}
+                      size="small"
+                      className={`text-xs ${statusColors[task.status]} border`}
+                    />
+                  </div>
+
+                  <div className="flex justify-between items-center mt-2">
+                    <div className="flex -space-x-2">
+                      {task.assignedTo.slice(0, 3).map((person, index) => (
+                        <Avatar
+                          key={index}
+                          sx={{ width: 24, height: 24 }}
+                          className="border border-slate-800"
+                        >
+                          {person.name.charAt(0).toUpperCase()}
+                        </Avatar>
+                      ))}
+                      {task.assignedTo.length > 3 && (
+                        <Avatar sx={{ width: 24, height: 24 }} className="bg-slate-700 text-xs border border-slate-800">
+                          +{task.assignedTo.length - 3}
+                        </Avatar>
+                      )}
+                    </div>
+                    <Typography variant="caption" className="text-slate-400">
+                      {getRelativeTime(task.updatedAt)}
+                    </Typography>
                   </div>
                 </motion.div>
               ))}
