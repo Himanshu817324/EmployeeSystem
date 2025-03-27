@@ -33,7 +33,7 @@ const CompanyLogo = () => {
       <group rotation={props.rotation.get()}>
         <Center>
           <Text3D
-            font="/fonts/helvetiker_regular.typeface.json"
+            font={"./fonts/helvetiker_regular.typeface.json"}
             size={0.75}
             height={0.2}
             curveSegments={12}

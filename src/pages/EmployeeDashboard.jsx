@@ -39,7 +39,7 @@ const TaskModel = ({ completionRate }) => {
       <group rotation={props.rotation.get()}>
         <Center>
           <Text3D
-            font="/fonts/helvetiker_regular.typeface.json"
+            font={"./fonts/helvetiker_regular.typeface.json"}
             size={0.5}
             height={0.1}
             curveSegments={12}
