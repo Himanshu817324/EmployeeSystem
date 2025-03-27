@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, HashRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import Sidebar from "./components/Sidebar";
@@ -22,9 +22,9 @@ const SidebarContext = createContext();
 function AppRouter() {
   return (
     <AuthProvider>
-      <Router>
+      <HashRouter>
         <AppRoutes />
-      </Router>
+      </HashRouter>
     </AuthProvider>
   );
 }

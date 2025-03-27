@@ -49,7 +49,7 @@ const Signup = () => {
         register(userData);
 
         // Redirect after successful signup
-        window.location.href = "/";
+        window.location.hash = "#/";
       } catch (error) {
         setSignupError(error.message);
       }

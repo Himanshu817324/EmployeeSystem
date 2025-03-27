@@ -31,7 +31,7 @@ const Login = () => {
       if (user) {
         // Store user in auth context
         login(email, password);
-        window.location.href = "/";
+        window.location.hash = "#/";
       } else {
         setError("Invalid email or password");
       }
