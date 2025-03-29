@@ -25,23 +25,23 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const getMenuItems = () => {
     // Common items for all users
     const items = [
-      { path: "", label: "Dashboard", icon: <Dashboard />, roles: ["admin", "employee", "team-lead"] },
-      { path: "profile", label: "My Profile", icon: <Person />, roles: ["admin", "employee", "team-lead"] },
-      { path: "tasks", label: "Tasks", icon: <Assignment />, roles: ["admin", "employee", "team-lead"] },
+      { path: "/", label: "Dashboard", icon: <Dashboard />, roles: ["admin", "employee", "team-lead"] },
+      { path: "/profile", label: "My Profile", icon: <Person />, roles: ["admin", "employee", "team-lead"] },
+      { path: "/tasks", label: "Tasks", icon: <Assignment />, roles: ["admin", "employee", "team-lead"] },
     ];
 
     // Admin-specific items
     if (user?.role === "admin") {
       items.push(
-        { path: "admin", label: "Admin Panel", icon: <SupervisorAccount />, roles: ["admin"] },
-        { path: "employees", label: "Employees", icon: <People />, roles: ["admin"] }
+        { path: "/admin", label: "Admin Panel", icon: <SupervisorAccount />, roles: ["admin"] },
+        { path: "/employees", label: "Employees", icon: <People />, roles: ["admin"] }
       );
     }
 
     // Team lead specific items
     if (user?.role === "team-lead") {
       items.push(
-        { path: "team", label: "My Team", icon: <People />, roles: ["team-lead"] }
+        { path: "/team", label: "My Team", icon: <People />, roles: ["team-lead"] }
       );
     }
 

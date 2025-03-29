@@ -57,18 +57,18 @@ const AppRoutes = () => {
         {/* Auth Routes - accessible when NOT logged in */}
         {!user ? (
           <>
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Signup />} />
-            <Route path="signup" element={<Signup />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Signup />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/" element={<Login />} />
-            <Route path="404" element={<NotFound />} />
+            <Route path="/404" element={<NotFound />} />
             <Route path="*" element={<Redirect404 />} />
           </>
         ) : (
           <>
             {/* Main Layout with Sidebar for authenticated users */}
-            <Route path="/*" element={<MainLayout />} />
+            <Route path="*" element={<MainLayout />} />
           </>
         )}
       </Routes>
@@ -82,7 +82,7 @@ const MainLayout = () => {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
 
   if (!user) {
-    return <Navigate to="login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -93,12 +93,12 @@ const MainLayout = () => {
       {/* Main Content - Adjusts margin based on sidebar state */}
       <main className={`p-6 transition-all duration-300 flex-1 ${isSidebarOpen ? 'ml-[220px]' : 'ml-[60px]'}`}>
         <Routes>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
           {/* Admin Routes */}
           <Route
-            path="admin"
+            path="/admin"
             element={
               <ProtectedRoute role="admin">
                 <AdminDashboard />
@@ -106,7 +106,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="employees"
+            path="/employees"
             element={
               <ProtectedRoute role="admin">
                 <Employees />
@@ -116,7 +116,7 @@ const MainLayout = () => {
 
           {/* Common Routes */}
           <Route
-            path="tasks"
+            path="/tasks"
             element={
               <ProtectedRoute>
                 <Tasks />
@@ -124,7 +124,7 @@ const MainLayout = () => {
             }
           />
           <Route
-            path="profile"
+            path="/profile"
             element={
               <ProtectedRoute>
                 <Profile />
@@ -134,7 +134,7 @@ const MainLayout = () => {
 
           {/* Team Lead Routes */}
           <Route
-            path="team"
+            path="/team"
             element={
               <ProtectedRoute role="team-lead">
                 <TeamPage />
@@ -144,7 +144,7 @@ const MainLayout = () => {
 
           {/* Employee Routes */}
           <Route
-            path="employee"
+            path="/employee"
             element={
               <ProtectedRoute role="employee">
                 <EmployeeDashboard />
@@ -152,7 +152,7 @@ const MainLayout = () => {
             }
           />
 
-          <Route path="404" element={<NotFound />} />
+          <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<Redirect404 />} />
         </Routes>
       </main>
