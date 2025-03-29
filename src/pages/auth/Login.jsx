@@ -32,7 +32,7 @@ const Login = () => {
       if (user) {
         // Store user in auth context
         login(email, password);
-        navigate('', { replace: true });
+        navigate('/');
       } else {
         setError("Invalid email or password");
       }

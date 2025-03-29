@@ -50,7 +50,7 @@ const Signup = () => {
         register(userData);
 
         // Redirect after successful signup
-        navigate('', { replace: true });
+        navigate('/');
       } catch (error) {
         setSignupError(error.message);
       }

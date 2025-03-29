@@ -50,7 +50,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('login');
+    navigate('/login');
   };
 
   // Filter menu items based on user role
