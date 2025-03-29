@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { HashRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoutes";
@@ -68,7 +68,27 @@ const AppRoutes = () => {
         ) : (
           <>
             {/* Main Layout with Sidebar for authenticated users */}
-            <Route path="*" element={<MainLayout />} />
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
+
+              {/* Admin Routes */}
+              <Route path="admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+              <Route path="employees" element={<ProtectedRoute role="admin"><Employees /></ProtectedRoute>} />
+
+              {/* Common Routes */}
+              <Route path="tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
+              <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+              {/* Team Lead Routes */}
+              <Route path="team" element={<ProtectedRoute role="team-lead"><TeamPage /></ProtectedRoute>} />
+
+              {/* Employee Routes */}
+              <Route path="employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
+
+              <Route path="404" element={<NotFound />} />
+              <Route path="*" element={<Redirect404 />} />
+            </Route>
           </>
         )}
       </Routes>
@@ -92,69 +112,7 @@ const MainLayout = () => {
 
       {/* Main Content - Adjusts margin based on sidebar state */}
       <main className={`p-6 transition-all duration-300 flex-1 ${isSidebarOpen ? 'ml-[220px]' : 'ml-[60px]'}`}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-
-          {/* Admin Routes */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute role="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/employees"
-            element={
-              <ProtectedRoute role="admin">
-                <Employees />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Common Routes */}
-          <Route
-            path="/tasks"
-            element={
-              <ProtectedRoute>
-                <Tasks />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Team Lead Routes */}
-          <Route
-            path="/team"
-            element={
-              <ProtectedRoute role="team-lead">
-                <TeamPage />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Employee Routes */}
-          <Route
-            path="/employee"
-            element={
-              <ProtectedRoute role="employee">
-                <EmployeeDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route path="/404" element={<NotFound />} />
-          <Route path="*" element={<Redirect404 />} />
-        </Routes>
+        <Outlet />
       </main>
     </div>
   );

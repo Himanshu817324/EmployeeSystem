@@ -94,6 +94,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <li key={item.path}>
               <NavLink
                 to={item.path}
+                replace
                 className={({ isActive }) =>
                   `flex items-center p-2 rounded-md transition-all 
                   ${isActive ? "bg-blue-600/20 text-blue-400" : "hover:bg-gray-800"}`
