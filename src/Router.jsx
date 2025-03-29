@@ -35,12 +35,14 @@ function AppRouter() {
 const Redirect404 = () => {
   const location = useLocation();
 
-  // If URL already contains 404, don't redirect again to prevent loops
-  if (location.pathname.includes('404')) {
+  // If we're already at a 404 page or if there's 404 in the pathname, just render the NotFound component
+  // This prevents infinite redirect loops
+  if (location.pathname === '/404' || location.pathname.includes('404')) {
     return <NotFound />;
   }
 
-  return <Navigate to="/404" replace />;
+  // Otherwise, redirect to the 404 page
+  return <Navigate to="/404" replace state={{ from: location }} />;
 };
 
 // Handle all routes and layouts
@@ -88,7 +90,7 @@ const MainLayout = () => {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="login" replace />;
   }
 
   return (

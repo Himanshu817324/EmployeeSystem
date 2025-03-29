@@ -32,7 +32,7 @@ const Login = () => {
       if (user) {
         // Store user in auth context
         login(email, password);
-        navigate('/');
+        navigate('', { replace: true });
       } else {
         setError("Invalid email or password");
       }
@@ -149,13 +149,13 @@ const Login = () => {
 
           <div className="mt-4 text-center">
             <span className="text-gray-400">Don't have an account? </span>
-            <Link to="/register" className="text-blue-400 hover:text-blue-300">
+            <Link to="register" className="text-blue-400 hover:text-blue-300">
               Register
             </Link>
           </div>
 
           <div className="mt-2 text-center">
-            <Link to="/forgot-password" className="text-gray-400 hover:text-gray-300 text-sm">
+            <Link to="forgot-password" className="text-gray-400 hover:text-gray-300 text-sm">
               Forgot Password?
             </Link>
           </div>
