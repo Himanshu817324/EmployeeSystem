@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, HashRouter } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import Sidebar from "./components/Sidebar";
@@ -12,6 +13,7 @@ import Signup from "./pages/auth/Signup";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Profile from "./pages/Profile";
 import TeamPage from "./pages/TeamPage";
+import NotFound from "./pages/NotFound";
 import { useAuth } from "./context/AuthContext";
 import "./App.css";
 import { useState, createContext, useContext } from "react";
@@ -53,7 +55,9 @@ const AppRoutes = () => {
             <Route path="/register" element={<Signup />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="*" element={<Navigate to="/EmployeeSystem/#/" replace />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
           </>
         ) : (
           <>
@@ -119,7 +123,8 @@ const AppRoutes = () => {
                 }
               />
 
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<Navigate to="/404" replace />} />
             </Route>
           </>
         )}
@@ -203,6 +208,9 @@ const MainLayout = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route path="404" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="404" replace />} />
         </Routes>
       </main>
     </div>

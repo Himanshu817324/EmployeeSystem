@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://himanshu817324.github.io/EmployeeSystem/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
