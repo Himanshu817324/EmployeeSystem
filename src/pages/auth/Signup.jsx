@@ -49,7 +49,7 @@ const Signup = () => {
         register(userData);
 
         // Redirect after successful signup
-        window.location.href = "/EmployeeSystem/#/";
+        window.location.href = window.location.origin + window.location.pathname + "#/";
       } catch (error) {
         setSignupError(error.message);
       }

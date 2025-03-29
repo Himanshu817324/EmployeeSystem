@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
 
     setUser(null);
     setLoading(false);
-    window.location.href = "/EmployeeSystem/#/login";
+    window.location.href = window.location.origin + window.location.pathname + "#/login";
   };
 
   return (

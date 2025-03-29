@@ -12,12 +12,12 @@ const ProtectedRoute = ({ role, children }) => {
 
   // If not logged in, redirect to login
   if (!user) {
-    return <Navigate to="/EmployeeSystem/#/login" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // If role is required but user doesn't have it, redirect to home
   if (role && user.role !== role) {
-    return <Navigate to="/EmployeeSystem/#/" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // User is authenticated and has required role, render children
