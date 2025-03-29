@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const NotFound = () => {
+  const { user } = useAuth();
+
+  // Determine the home route based on authentication status
+  const homeRoute = user ? "/dashboard" : "/login";
+
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-slate-900 text-slate-100">
       <div className="text-center">
@@ -11,7 +17,7 @@ const NotFound = () => {
           or is temporarily unavailable.
         </p>
         <Link
-          to="/"
+          to={homeRoute}
           className="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors duration-300"
         >
           Return to Home

@@ -51,12 +51,12 @@ const AppRoutes = () => {
         {/* Auth Routes - accessible when NOT logged in */}
         {!user ? (
           <>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Signup />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Signup />} />
+            <Route path="signup" element={<Signup />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="/" element={<Login />} />
-            <Route path="/404" element={<NotFound />} />
+            <Route path="404" element={<NotFound />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
           </>
         ) : (
@@ -123,7 +123,7 @@ const AppRoutes = () => {
                 }
               />
 
-              <Route path="/404" element={<NotFound />} />
+              <Route path="404" element={<NotFound />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Route>
           </>
