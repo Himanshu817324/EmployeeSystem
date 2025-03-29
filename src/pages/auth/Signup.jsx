@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff, Lock, Person, Email } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 // eslint-disable-next-line no-unused-vars
@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,7 +50,7 @@ const Signup = () => {
         register(userData);
 
         // Redirect after successful signup
-        window.location.href = window.location.origin + window.location.pathname + "#/";
+        navigate('/');
       } catch (error) {
         setSignupError(error.message);
       }

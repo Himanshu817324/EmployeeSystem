@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Menu as MenuIcon,
   Dashboard,
@@ -19,6 +19,7 @@ import { useAuth } from "../context/AuthContext";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   // Define menu items based on role
   const getMenuItems = () => {
@@ -49,6 +50,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const handleLogout = () => {
     logout();
+    navigate('/login');
   };
 
   // Filter menu items based on user role

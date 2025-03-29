@@ -59,7 +59,8 @@ export const AuthProvider = ({ children }) => {
 
     setUser(null);
     setLoading(false);
-    window.location.href = window.location.origin + window.location.pathname + "#/login";
+    // Note: we're not using navigation here because this context provider
+    // is outside the Router context. The logout redirect will be handled in components
   };
 
   return (

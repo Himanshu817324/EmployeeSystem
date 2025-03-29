@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Paper, InputAdornment, IconButton } from "@mui/material";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
@@ -8,6 +8,7 @@ import { Email, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Login = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ const Login = () => {
       if (user) {
         // Store user in auth context
         login(email, password);
-        window.location.href = window.location.origin + window.location.pathname + "#/";
+        navigate('/');
       } else {
         setError("Invalid email or password");
       }

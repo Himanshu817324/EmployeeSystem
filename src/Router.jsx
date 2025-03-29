@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { HashRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoutes";
@@ -31,6 +31,18 @@ function AppRouter() {
   );
 }
 
+// Custom 404 redirect component to prevent loops
+const Redirect404 = () => {
+  const location = useLocation();
+
+  // If URL already contains 404, don't redirect again to prevent loops
+  if (location.pathname.includes('404')) {
+    return <NotFound />;
+  }
+
+  return <Navigate to="/404" replace />;
+};
+
 // Handle all routes and layouts
 const AppRoutes = () => {
   const { user, loading } = useAuth();
@@ -57,75 +69,12 @@ const AppRoutes = () => {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="/" element={<Login />} />
             <Route path="404" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="404" replace />} />
+            <Route path="*" element={<Redirect404 />} />
           </>
         ) : (
           <>
             {/* Main Layout with Sidebar for authenticated users */}
-            <Route path="/*" element={<MainLayout />}>
-              {/* Dashboard routes */}
-              <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
-
-              {/* Admin Routes */}
-              <Route
-                path="admin"
-                element={
-                  <ProtectedRoute role="admin">
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="employees"
-                element={
-                  <ProtectedRoute role="admin">
-                    <Employees />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Common Routes */}
-              <Route
-                path="tasks"
-                element={
-                  <ProtectedRoute>
-                    <Tasks />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Team Lead Routes */}
-              <Route
-                path="team"
-                element={
-                  <ProtectedRoute role="team-lead">
-                    <TeamPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Employee Routes */}
-              <Route
-                path="employee"
-                element={
-                  <ProtectedRoute role="employee">
-                    <EmployeeDashboard />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route path="404" element={<NotFound />} />
-              <Route path="*" element={<Navigate to="404" replace />} />
-            </Route>
+            <Route path="/*" element={<MainLayout />} />
           </>
         )}
       </Routes>
@@ -139,7 +88,7 @@ const MainLayout = () => {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
 
   if (!user) {
-    return <Navigate to="login" />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -210,7 +159,7 @@ const MainLayout = () => {
           />
 
           <Route path="404" element={<NotFound />} />
-          <Route path="*" element={<Navigate to="404" replace />} />
+          <Route path="*" element={<Redirect404 />} />
         </Routes>
       </main>
     </div>
