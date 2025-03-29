@@ -57,7 +57,7 @@ const AppRoutes = () => {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="/" element={<Login />} />
             <Route path="404" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />
+            <Route path="*" element={<Navigate to="404" replace />} />
           </>
         ) : (
           <>
@@ -124,7 +124,7 @@ const AppRoutes = () => {
               />
 
               <Route path="404" element={<NotFound />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />
+              <Route path="*" element={<Navigate to="404" replace />} />
             </Route>
           </>
         )}
@@ -139,7 +139,7 @@ const MainLayout = () => {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="login" />;
   }
 
   return (
